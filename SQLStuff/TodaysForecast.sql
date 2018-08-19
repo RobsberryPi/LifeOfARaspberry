@@ -20,6 +20,8 @@ LEFT JOIN
 	WeatherDataTypeRef WRef
 on
 	WRef.Abreviation = W.ForecastCode
+and
+	WRef.DataType = 'Forecast'
 
 LEFT JOIN
 	WeatherTypeRef WTypeRef

@@ -44,12 +44,12 @@ root = ET.fromstring(r.content)
 SD = time.strftime('%Y-%m-%d %H:%M:%S')
 
 #Refresh Reference data
-RefRefresh = 0
+RefRefresh = 1
 
 #There is some reference data (some is manual), set the above to 1 to refresh it
 if RefRefresh == 1:
 
-    SQL = "DELETE FROM WeatherDataTypeRef"
+    SQL = "DELETE FROM WeatherDataTypeRef WHERE DataType = 'Forecast'"
     #Wipe out current referrance data
     curs.execute(SQL)
 
@@ -64,11 +64,13 @@ if RefRefresh == 1:
                                             WeatherType\
                                             ,Units\
                                             ,Abreviation\
+                                            ,DataType\
                                             )\
                                     Values  (\
                                             '" + FullTypeName +"'\
                                             ,'" + Units + "'\
                                             ,'" + ShortName +"'\
+                                            ,'Forecast'\
                                             )"
         curs.execute(SQL)
     db.commit()
