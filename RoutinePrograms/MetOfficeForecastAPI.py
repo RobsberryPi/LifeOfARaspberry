@@ -3,19 +3,34 @@ import xml.etree.ElementTree as ET
 import pymysql
 import time
 
-#Connect to database
-db = pymysql.connections.Connection(host='localhost',user='pi',password='123',database='RaspberryFields')
+#Connect to database#get the password for the database
+PILogin = open("/home/pi/PILogin","r")
+PIUser = str(PILogin.readline())
+PIPassword = str(PILogin.readline())
+
+PIUser = PIUser.strip()
+PIPassword = PIPassword.strip()
+
+PILogin.close
+
+#Database connection
+db = pymysql.connections.Connection(host='localhost',user=PIUser,password=PIPassword,database='RaspberryFields')
 curs = db.cursor()
 
 #Base URL
 BU = "http://datapoint.metoffice.gov.uk/public/data/"
 
 #Data page?
-DP = "val/wxfcs/all/xml/351446?res=3hourly&"
+DP = "val/wxfcs/all/xml/351446?res=3hourly&key="
 
 #Retrive the key for the API
-AK = str(curs.execute("SELECT APIKey From APIKeys WHERE Site = 'MetOffice'"))
-print(AK)
+curs.execute("SELECT APIKey From APIKeys WHERE Site = 'MetOffice'")
+AK = str(curs.fetchone())
+AK = AK.replace("(","")
+AK = AK.replace(")","")
+AK = AK.replace("'","")
+AK = AK.replace(",","")
+AK = AK.replace(" ","")
 
 URL = BU + DP + AK
 

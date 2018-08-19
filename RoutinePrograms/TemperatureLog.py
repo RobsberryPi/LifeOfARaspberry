@@ -5,9 +5,19 @@ import time
 TempFile = open("/sys/class/thermal/thermal_zone0/temp", "r")
 CPUInt = float(TempFile.read())
 CPUTemp = str(CPUInt/1000)
+TempFile.close
+
+PILogin = open("/home/pi/PILogin","r")
+PIUser = str(PILogin.readline())
+PIPassword = str(PILogin.readline())
+
+PIUser = PIUser.strip()
+PIPassword = PIPassword.strip()
+
+PILogin.close
 
 #Database connection
-db = pymysql.connections.Connection(host='localhost',user='pi',password='123',database='RaspberryFields')
+db = pymysql.connections.Connection(host='localhost',user=PIUser,password=PIPassword,database='RaspberryFields')
 
 #Cursor to carry out statements
 curs = db.cursor()

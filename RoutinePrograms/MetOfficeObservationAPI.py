@@ -3,8 +3,18 @@ import xml.etree.ElementTree as ET
 import pymysql
 import time
 
-#Connect to database
-db = pymysql.connections.Connection(host='localhost',user='pi',password='123',database='RaspberryFields')
+#get the password for the database
+PILogin = open("/home/pi/PILogin","r")
+PIUser = str(PILogin.readline())
+PIPassword = str(PILogin.readline())
+
+PIUser = PIUser.strip()
+PIPassword = PIPassword.strip()
+
+PILogin.close
+
+#Database connection
+db = pymysql.connections.Connection(host='localhost',user=PIUser,password=PIPassword,database='RaspberryFields')
 curs = db.cursor()
 
 #Retrive the key for the API

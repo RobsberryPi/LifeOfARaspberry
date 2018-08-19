@@ -84,4 +84,5 @@ sleep(WaitTime)
 
 S.set_pixels(Heart)
 
-S.low_light = False
+S.clear(0,0,0)
+
