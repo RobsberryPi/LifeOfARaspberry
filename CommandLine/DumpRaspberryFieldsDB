@@ -1,0 +1,1 @@
+sudo mysqldump -u root -p$MOUSEPASSWORD --no-data RaspberryFields > /home/pi/Git/PythonLearning/"SQL Stuff"/RaspberryFields.sql
