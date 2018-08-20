@@ -16,6 +16,36 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `APIKeys`
+--
+
+DROP TABLE IF EXISTS `APIKeys`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `APIKeys` (
+  `Site` varchar(150) DEFAULT NULL,
+  `APIKey` varchar(150) NOT NULL,
+  PRIMARY KEY (`APIKey`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Temporary table structure for view `Observations`
+--
+
+DROP TABLE IF EXISTS `Observations`;
+/*!50001 DROP VIEW IF EXISTS `Observations`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE TABLE `Observations` (
+  `ObservationTime` tinyint NOT NULL,
+  `WeatherType` tinyint NOT NULL,
+  `ObservationValue` tinyint NOT NULL,
+  `Units` tinyint NOT NULL
+) ENGINE=MyISAM */;
+SET character_set_client = @saved_cs_client;
+
+--
 -- Table structure for table `PIData`
 --
 
@@ -32,7 +62,7 @@ CREATE TABLE `PIData` (
   `SenseTempHumidity` float(7,3) DEFAULT NULL,
   `SenseTempPressure` float(7,3) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=527 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=613 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -108,8 +138,9 @@ CREATE TABLE `WeatherDataTypeRef` (
   `WeatherType` varchar(50) DEFAULT NULL,
   `Units` varchar(10) DEFAULT NULL,
   `Abreviation` varchar(5) DEFAULT NULL,
+  `DataType` varchar(25) DEFAULT NULL,
   PRIMARY KEY (`ReferenceId`)
-) ENGINE=InnoDB AUTO_INCREMENT=31 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=341 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -126,7 +157,24 @@ CREATE TABLE `WeatherForecast` (
   `ForecastValue` varchar(10) DEFAULT NULL,
   `CreateTime` datetime DEFAULT NULL,
   PRIMARY KEY (`ForecastKey`)
-) ENGINE=InnoDB AUTO_INCREMENT=1951 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=15421 DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `WeatherObservations`
+--
+
+DROP TABLE IF EXISTS `WeatherObservations`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `WeatherObservations` (
+  `ObsKey` int(100) NOT NULL AUTO_INCREMENT,
+  `ObservationTime` datetime NOT NULL,
+  `ObservationCode` varchar(5) DEFAULT NULL,
+  `ObservationValue` varchar(15) DEFAULT NULL,
+  `CreateTime` datetime DEFAULT NULL,
+  PRIMARY KEY (`ObsKey`)
+) ENGINE=InnoDB AUTO_INCREMENT=2745 DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -142,6 +190,25 @@ CREATE TABLE `WeatherTypeRef` (
   PRIMARY KEY (`Code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 /*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Final view structure for view `Observations`
+--
+
+/*!50001 DROP TABLE IF EXISTS `Observations`*/;
+/*!50001 DROP VIEW IF EXISTS `Observations`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`pi`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `Observations` AS select `W`.`ObservationTime` AS `ObservationTime`,`WRef`.`WeatherType` AS `WeatherType`,(case `W`.`ObservationCode` when 'W' then `WTypeRef`.`Description` when 'U' then concat(`W`.`ObservationValue`,' - ',`UVRef`.`Description`) else `W`.`ObservationValue` end) AS `ObservationValue`,`WRef`.`Units` AS `Units` from (((`WeatherObservations` `W` left join `WeatherDataTypeRef` `WRef` on(((`WRef`.`Abreviation` = `W`.`ObservationCode`) and (`WRef`.`DataType` = 'Observations')))) left join `WeatherTypeRef` `WTypeRef` on(((`WTypeRef`.`Code` = `W`.`ObservationValue`) and (`W`.`ObservationCode` = 'W')))) left join `UVIndexRef` `UVRef` on(((`UVRef`.`Code` = `W`.`ObservationValue`) and (`W`.`ObservationCode` = 'U')))) order by `W`.`ObservationTime`,`WRef`.`WeatherType` */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
 
 --
 -- Final view structure for view `RoomTemp`
@@ -176,7 +243,7 @@ CREATE TABLE `WeatherTypeRef` (
 /*!50001 SET collation_connection      = utf8mb4_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`pi`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `TodaysForecast` AS select `W`.`ForecastTime` AS `ForecastTime`,`WRef`.`WeatherType` AS `WeatherType`,(case `W`.`ForecastCode` when 'W' then `WTypeRef`.`Description` when 'V' then `VisRef`.`Description` when 'U' then concat(`W`.`ForecastValue`,' - ',`UVRef`.`Description`) else `W`.`ForecastValue` end) AS `ForecastValue`,`WRef`.`Units` AS `Units` from ((((`WeatherForecast` `W` left join `WeatherDataTypeRef` `WRef` on((`WRef`.`Abreviation` = `W`.`ForecastCode`))) left join `WeatherTypeRef` `WTypeRef` on(((`WTypeRef`.`Code` = `W`.`ForecastValue`) and (`W`.`ForecastCode` = 'W')))) left join `VisibilityRef` `VisRef` on(((`VisRef`.`Code` = `W`.`ForecastValue`) and (`W`.`ForecastCode` = 'V')))) left join `UVIndexRef` `UVRef` on(((`UVRef`.`Code` = `W`.`ForecastValue`) and (`W`.`ForecastCode` = 'U')))) where (`W`.`ForecastTime` between (sysdate() + interval -(3) hour) and ((cast(sysdate() as date) + interval 1 day) + interval -(1) second)) order by `W`.`ForecastTime`,`WRef`.`WeatherType` */;
+/*!50001 VIEW `TodaysForecast` AS select `W`.`ForecastTime` AS `ForecastTime`,`WRef`.`WeatherType` AS `WeatherType`,(case `W`.`ForecastCode` when 'W' then `WTypeRef`.`Description` when 'V' then `VisRef`.`Description` when 'U' then concat(`W`.`ForecastValue`,' - ',`UVRef`.`Description`) else `W`.`ForecastValue` end) AS `ForecastValue`,`WRef`.`Units` AS `Units` from ((((`WeatherForecast` `W` left join `WeatherDataTypeRef` `WRef` on(((`WRef`.`Abreviation` = `W`.`ForecastCode`) and (`WRef`.`DataType` = 'Forecast')))) left join `WeatherTypeRef` `WTypeRef` on(((`WTypeRef`.`Code` = `W`.`ForecastValue`) and (`W`.`ForecastCode` = 'W')))) left join `VisibilityRef` `VisRef` on(((`VisRef`.`Code` = `W`.`ForecastValue`) and (`W`.`ForecastCode` = 'V')))) left join `UVIndexRef` `UVRef` on(((`UVRef`.`Code` = `W`.`ForecastValue`) and (`W`.`ForecastCode` = 'U')))) where (`W`.`ForecastTime` between (sysdate() + interval -(3) hour) and ((cast(sysdate() as date) + interval 1 day) + interval -(1) second)) order by `W`.`ForecastTime`,`WRef`.`WeatherType` */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -190,4 +257,4 @@ CREATE TABLE `WeatherTypeRef` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-08-19 10:20:10
+-- Dump completed on 2018-08-20 18:49:41
