@@ -1,4 +1,4 @@
-Create View 
+Alter View 
 	Forecast
 as
 	SELECT

@@ -4,7 +4,7 @@ import pymysql
 import time
 
 #get the password for the database
-PILogin = open("/home/pi/PILogin","r")
+PILogin = open("/home/pi/Auth/PILogin","r")
 PIUser = str(PILogin.readline())
 PIPassword = str(PILogin.readline())
 

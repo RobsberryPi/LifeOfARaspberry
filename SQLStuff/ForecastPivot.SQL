@@ -17,5 +17,3 @@ FROM
 	Forecast TF
 Group by
 	TF.ForecastTime
-ORDER BY
-	TF.ForecastTime

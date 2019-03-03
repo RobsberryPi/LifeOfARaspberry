@@ -7,7 +7,7 @@ CPUInt = float(TempFile.read())
 CPUTemp = str(CPUInt/1000)
 TempFile.close
 
-PILogin = open("/home/pi/PILogin","r")
+PILogin = open("/home/pi/Auth/PILogin","r")
 PIUser = str(PILogin.readline())
 PIPassword = str(PILogin.readline())
 
